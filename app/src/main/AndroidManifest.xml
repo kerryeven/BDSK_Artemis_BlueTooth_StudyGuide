@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="e.kerry.bdsk">
+    <!--*******************************************************************************************
+    Rev 1 - Filtering turned off...read on as to how to turn it on if you need it...
+
+    • Request permissions from the user to perform Bluetooth ‘scanning’, if necessary.
+    • Scan for and discover a nearby Bluetooth peripheral device.
+    • Connect to a selected Bluetooth peripheral
+    • Communicate with the Bluetooth peripheral device, exercising the capabilities of that device’s
+      Bluetooth profile. In this case, the peripheral device created in one of the server labs, acts
+      as a specialised proximity device using a customised version of the Bluetooth standard
+      Proximity profile.
+
+    Originally WOULD NOT CONNECT.  Tracking through Debug and Logcat, I noticed that it was
+    failing with BLUETOOTH permission which is obviously used below.  In Logcat, I noticed the
+    last entry for BDSK filter was a GATT connection status of 133.  Further Googling showed that
+    the ConnectGATT has 4 parameters.  This document used 3.  Entering the fourth recommended
+    parameter of TRANSPORT_LE resulted in a API error stating that I was using a minimum of API 22
+    and to get it to work..needed 23.  I changed the MinSdkVersion to 23 in build.gradel (Module app)
+    and it started connecting.  My phone is running Pie so it is related to new Android version.
+    KNOWN BUG WITH SCAN FILTER - BleScanner startScanning has workaround for name filtering.
+    *********************************************************************************************-->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.PeripheralControlActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <service
+            android:name=".bluetooth.BleAdapterService"
+            android:enabled="true" />
+
+    </application>
+
+</manifest>
