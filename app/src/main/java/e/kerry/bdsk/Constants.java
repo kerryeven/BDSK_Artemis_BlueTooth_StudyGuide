@@ -8,4 +8,6 @@ public class Constants {
     public static final byte [] ALERT_LEVEL_LOW = { (byte) 0x00};
     public static final byte [] ALERT_LEVEL_MID = { (byte) 0x01};
     public static final byte [] ALERT_LEVEL_HIGH = { (byte) 0x02};
+    public static final byte [] ALERT_LEVEL_STOP = { (byte) 0x03};
+    public static final byte [] ALERT_LEVEL_OTHER = { (byte) 0x04};
 }

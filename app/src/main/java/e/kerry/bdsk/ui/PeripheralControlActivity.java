@@ -49,6 +49,10 @@ public class PeripheralControlActivity extends Activity {
     private boolean share_with_server = false;
     private Switch share_switch;
     private BleAdapterService bluetooth_le_adapter;
+    private Button b_Connect;
+    private Button b_Send;
+    byte [] al = new byte[1];
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,8 @@ public class PeripheralControlActivity extends Activity {
         device_name = intent.getStringExtra(EXTRA_NAME);
         device_address = intent.getStringExtra(EXTRA_ID);
 // show the device name
+        b_Connect = this.findViewById(R.id.connectButton);
+        b_Send = this.findViewById(R.id.stopButton);
         ((TextView) this.findViewById(R.id.nameTextView)).setText("Device : "+device_name
                 +" ["+device_address+"]");
         // hide the coloured rectangle used to show green/amber/red rssi
@@ -66,13 +72,15 @@ public class PeripheralControlActivity extends Activity {
         ((LinearLayout) this.findViewById(R.id.rectangle))
                 .setVisibility(View.INVISIBLE);
 // disable the noise button
-        ((Button) PeripheralControlActivity.this.findViewById(R.id.noiseButton))
+        ((Button) PeripheralControlActivity.this.findViewById(R.id.stopButton))
                 .setEnabled(false);
 
 // disable the LOW/MID/HIGH alert level selection buttons
-        ((Button) this.findViewById(R.id.lowButton)).setEnabled(false);
-        ((Button) this.findViewById(R.id.midButton)).setEnabled(false);
-        ((Button) this.findViewById(R.id.highButton)).setEnabled(false);
+        ((Button) this.findViewById(R.id.leftButton)).setEnabled(false);
+        ((Button) this.findViewById(R.id.fwrdButton)).setEnabled(false);
+        ((Button) this.findViewById(R.id.rightButton)).setEnabled(false);
+        ((Button) this.findViewById(R.id.rvrseButton)).setEnabled(false);
+        ((Button) this.findViewById(R.id.stopButton)).setEnabled(false);
         share_switch = (Switch) this.findViewById(R.id.switch1);
         share_switch.setEnabled(false);
         share_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -84,7 +92,32 @@ public class PeripheralControlActivity extends Activity {
 // connect to the Bluetooth adapter service
         Intent gattServiceIntent = new Intent(this, BleAdapterService.class);
         bindService(gattServiceIntent, service_connection, BIND_AUTO_CREATE);
-        showMsg("READY");
+        showMsg("Working it....CONNECTING...");
+        /*******************************************************************************************
+         * can't connect to adapter from onCreate as adapter is not started untill after onCreate
+         * is exited.  So, create Runnapble to run 5 seconds after onCreate finishes to allow
+         * adapter to be created.
+         ******************************************************************************************/
+        b_Connect.setVisibility(View.INVISIBLE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showMsg("onConnect");
+                if (bluetooth_le_adapter != null) {
+                    if (bluetooth_le_adapter.connect(device_address)) {
+                        ((Button) PeripheralControlActivity.this
+                                .findViewById(R.id.connectButton)).setEnabled(false);
+                    } else {
+                        showMsg("onConnect: failed to connect");
+                    }
+                } else {
+                    showMsg("onConnect: bluetooth_le_adapter=null");
+                }
+                //b_Connect.performClick();
+            }
+        }, 5000);
+        //b_Connect.performClick();
+
     }
     private void showMsg(final String msg) {
         Log.d(Constants.TAG, msg);
@@ -132,10 +165,11 @@ public class PeripheralControlActivity extends Activity {
 // we're connected
                     showMsg("CONNECTED");
                     // enable the LOW/MID/HIGH alert level selection buttons
-                    ((Button) PeripheralControlActivity.this.findViewById(R.id.lowButton)).setEnabled(true);
-                    ((Button) PeripheralControlActivity.this.findViewById(R.id.midButton)).setEnabled(true);
-                    ((Button) PeripheralControlActivity.this.findViewById(R.id.highButton)).setEnabled(true);
-                    ((Button) PeripheralControlActivity.this.findViewById(R.id.noiseButton)).setEnabled(true);
+                    ((Button) PeripheralControlActivity.this.findViewById(R.id.leftButton)).setEnabled(true);
+                    ((Button) PeripheralControlActivity.this.findViewById(R.id.fwrdButton)).setEnabled(true);
+                    ((Button) PeripheralControlActivity.this.findViewById(R.id.rightButton)).setEnabled(true);
+                    ((Button) PeripheralControlActivity.this.findViewById(R.id.rvrseButton)).setEnabled(true);
+                    ((Button) PeripheralControlActivity.this.findViewById(R.id.stopButton)).setEnabled(true);
                     bluetooth_le_adapter.discoverServices();
                     break;
                 case BleAdapterService.GATT_DISCONNECT:
@@ -148,9 +182,11 @@ public class PeripheralControlActivity extends Activity {
                             .findViewById(R.id.rectangle))
                             .setVisibility(View.INVISIBLE);
                     // disable the LOW/MID/HIGH alert level selection buttons
-                    ((Button) PeripheralControlActivity.this.findViewById(R.id.lowButton)).setEnabled(false);
-                    ((Button) PeripheralControlActivity.this.findViewById(R.id.midButton)).setEnabled(false);
-                    ((Button) PeripheralControlActivity.this.findViewById(R.id.highButton)).setEnabled(false);
+                    ((Button) PeripheralControlActivity.this.findViewById(R.id.leftButton)).setEnabled(false);
+                    ((Button) PeripheralControlActivity.this.findViewById(R.id.fwrdButton)).setEnabled(false);
+                    ((Button) PeripheralControlActivity.this.findViewById(R.id.rightButton)).setEnabled(false);
+                    ((Button) PeripheralControlActivity.this.findViewById(R.id.rvrseButton)).setEnabled(false);
+                    ((Button) PeripheralControlActivity.this.findViewById(R.id.stopButton)).setEnabled(false);
                     // stop the rssi reading timer
                     stopTimer();
                     if (back_requested) {
@@ -197,9 +233,11 @@ public class PeripheralControlActivity extends Activity {
                                 .findViewById(R.id.rectangle))
                                 .setVisibility(View.VISIBLE);
 // enable the LOW/MID/HIGH alert level selection buttons
-                        ((Button) PeripheralControlActivity.this.findViewById(R.id.lowButton)).setEnabled(true);
-                        ((Button) PeripheralControlActivity.this.findViewById(R.id.midButton)).setEnabled(true);
-                        ((Button) PeripheralControlActivity.this.findViewById(R.id.highButton)).setEnabled(true);
+                        ((Button) PeripheralControlActivity.this.findViewById(R.id.leftButton)).setEnabled(true);
+                        ((Button) PeripheralControlActivity.this.findViewById(R.id.fwrdButton)).setEnabled(true);
+                        ((Button) PeripheralControlActivity.this.findViewById(R.id.rightButton)).setEnabled(true);
+                        ((Button) PeripheralControlActivity.this.findViewById(R.id.rvrseButton)).setEnabled(true);
+                        ((Button) PeripheralControlActivity.this.findViewById(R.id.stopButton)).setEnabled(true);
                         //After service discovery has completed and we’ve validated the services on
                         // the device, we’ll read the alert level characteristic.
                         bluetooth_le_adapter.readCharacteristic(
@@ -219,7 +257,7 @@ public class PeripheralControlActivity extends Activity {
                             .toUpperCase().equals(BleAdapterService.LINK_LOSS_SERVICE_UUID)) {
                         b = bundle.getByteArray(BleAdapterService.PARCEL_VALUE);
                         if (b.length > 0) {
-                            PeripheralControlActivity.this.setAlertLevel((int) b[0]);
+                            //PeripheralControlActivity.this.setAlertLevel((int) b[0]);
                             // show the rssi distance colored rectangle
                             ((LinearLayout) PeripheralControlActivity.this
                                     .findViewById(R.id.rectangle))
@@ -230,11 +268,13 @@ public class PeripheralControlActivity extends Activity {
                     }
                     break;
                 case BleAdapterService.GATT_CHARACTERISTIC_WRITTEN:
+                    //changes appropriate button color to red after writing GATT_CHAR...
                     bundle = msg.getData();
                     if (bundle.get(BleAdapterService.PARCEL_CHARACTERISTIC_UUID).toString()
                             .toUpperCase().equals(BleAdapterService.ALERT_LEVEL_CHARACTERISTIC)
                             && bundle.get(BleAdapterService.PARCEL_SERVICE_UUID).toString()
-                            .toUpperCase().equals(BleAdapterService.LINK_LOSS_SERVICE_UUID)) {
+                            .toUpperCase().equals(BleAdapterService.IMMEDIATE_ALERT_SERVICE_UUID)) {
+                        //KHE changed LINK_LOSS_SERVICE_UUID to IMMEDIATE...(previous line)
                         b = bundle.getByteArray(BleAdapterService.PARCEL_VALUE);
                         if (b.length > 0) {
                             PeripheralControlActivity.this.setAlertLevel((int) b[0]);
@@ -286,28 +326,55 @@ public class PeripheralControlActivity extends Activity {
     // alert level characteristic of the link loss service:
     public void onLow(View view) {
         bluetooth_le_adapter.writeCharacteristic(
-                BleAdapterService.LINK_LOSS_SERVICE_UUID,
+                //BleAdapterService.LINK_LOSS_SERVICE_UUID,
+                BleAdapterService.IMMEDIATE_ALERT_SERVICE_UUID,
                 BleAdapterService.ALERT_LEVEL_CHARACTERISTIC, Constants.ALERT_LEVEL_LOW
         );
+        //setAlertLevel(0);
+        //new Handler().postDelayed(new Runnable() {
+        //    @Override
+        //    public void run() {
+        //        ((Button) findViewById(R.id.noiseButton)).performClick();
+        //        //b_Send.performClick();
+        //    }
+        //}, 1000);
     }
     public void onMid(View view) {
         bluetooth_le_adapter.writeCharacteristic(
-                BleAdapterService.LINK_LOSS_SERVICE_UUID,
+                BleAdapterService.IMMEDIATE_ALERT_SERVICE_UUID,
                 BleAdapterService.ALERT_LEVEL_CHARACTERISTIC, Constants.ALERT_LEVEL_MID
         );
+        //setAlertLevel(1);
+        //new Handler().postDelayed(new Runnable() {
+        //    @Override
+        //public void run() {
+        //        ((Button) findViewById(R.id.noiseButton)).performClick();
+        //    }
+        //}, 1000);
     }
     public void onHigh(View view) {
         bluetooth_le_adapter.writeCharacteristic(
-                BleAdapterService.LINK_LOSS_SERVICE_UUID,
+                //BleAdapterService.LINK_LOSS_SERVICE_UUID,
+                //BleAdapterService.ALERT_LEVEL_CHARACTERISTIC, Constants.ALERT_LEVEL_HIGH
+                BleAdapterService.IMMEDIATE_ALERT_SERVICE_UUID,
                 BleAdapterService.ALERT_LEVEL_CHARACTERISTIC, Constants.ALERT_LEVEL_HIGH
         );
     }
-    public void onNoise(View view) {
-        byte [] al = new byte[1];
-        al[0] = (byte) alert_level;
+    public void onOther(View view) {
+        bluetooth_le_adapter.writeCharacteristic(
+                //BleAdapterService.LINK_LOSS_SERVICE_UUID,
+                //BleAdapterService.ALERT_LEVEL_CHARACTERISTIC, Constants.ALERT_LEVEL_HIGH
+                BleAdapterService.IMMEDIATE_ALERT_SERVICE_UUID,
+                BleAdapterService.ALERT_LEVEL_CHARACTERISTIC, Constants.ALERT_LEVEL_OTHER
+        );
+    }
+    public void onStop(View view) {
+        //al[0] = (byte) 4;
+        //byte [] al = new byte[1];
+        //al[0] = (byte) alert_level;
         bluetooth_le_adapter.writeCharacteristic(
                 BleAdapterService.IMMEDIATE_ALERT_SERVICE_UUID,
-                BleAdapterService.ALERT_LEVEL_CHARACTERISTIC, al
+                BleAdapterService.ALERT_LEVEL_CHARACTERISTIC, Constants.ALERT_LEVEL_STOP
         );
     }
 
@@ -340,18 +407,26 @@ public class PeripheralControlActivity extends Activity {
      **********************************************************************************************/
     private void setAlertLevel(int alert_level) {
         this.alert_level = alert_level;
-        ((Button) this.findViewById(R.id.lowButton)).setTextColor(Color.parseColor("#000000")); ;
-        ((Button) this.findViewById(R.id.midButton)).setTextColor(Color.parseColor("#000000")); ;
-        ((Button) this.findViewById(R.id.highButton)).setTextColor(Color.parseColor("#000000")); ;
+        ((Button) this.findViewById(R.id.leftButton)).setTextColor(Color.parseColor("#000000")); ;
+        ((Button) this.findViewById(R.id.fwrdButton)).setTextColor(Color.parseColor("#000000")); ;
+        ((Button) this.findViewById(R.id.rightButton)).setTextColor(Color.parseColor("#000000")); ;
+        ((Button) this.findViewById(R.id.rvrseButton)).setTextColor(Color.parseColor("#000000")); ;
+        ((Button) this.findViewById(R.id.stopButton)).setTextColor(Color.parseColor("#000000")); ;
         switch (alert_level) {
             case 0:
-                ((Button) this.findViewById(R.id.lowButton)).setTextColor(Color.parseColor("#FF0000")); ;
+                ((Button) this.findViewById(R.id.leftButton)).setTextColor(Color.parseColor("#FF0000")); ;
                 break;
             case 1:
-                ((Button) this.findViewById(R.id.midButton)).setTextColor(Color.parseColor("#FF0000")); ;
+                ((Button) this.findViewById(R.id.fwrdButton)).setTextColor(Color.parseColor("#FF0000")); ;
                 break;
             case 2:
-                ((Button) this.findViewById(R.id.highButton)).setTextColor(Color.parseColor("#FF0000")); ;
+                ((Button) this.findViewById(R.id.rightButton)).setTextColor(Color.parseColor("#FF0000")); ;
+                break;
+            case 3:
+                ((Button) this.findViewById(R.id.stopButton)).setTextColor(Color.parseColor("#FF0000")); ;
+                break;
+            case 4:
+                ((Button) this.findViewById(R.id.rvrseButton)).setTextColor(Color.parseColor("#FF0000")); ;
                 break;
         }
     }

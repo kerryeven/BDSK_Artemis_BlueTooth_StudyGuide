@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:onClick="onNoise">
     android:orientation="vertical" >
 
     <TextView
@@ -11,6 +12,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:text="name" />
+
     <TextView
         android:id="@+id/rssiTextView"
         android:layout_width="wrap_content"
@@ -19,6 +21,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="RSSI" />
+
     <LinearLayout
         android:id="@+id/rectangle"
         android:layout_width="200dp"
@@ -28,36 +31,51 @@
         android:layout_marginTop="21dp"
         android:background="#FF0000"
         android:orientation="vertical"
-        android:padding="10dp" >
-    </LinearLayout>
+        android:padding="10dp"></LinearLayout>
+
     <Button
-        android:id="@+id/lowButton"
+        android:id="@+id/leftButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/midButton"
-        android:layout_marginRight="21dp"
-        android:layout_toLeftOf="@+id/midButton"
+        android:layout_below="@+id/fwrdButton"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="15dp"
+        android:layout_toLeftOf="@+id/fwrdButton"
         android:onClick="onLow"
-        android:text="Low" />
+        android:text="Left" />
+
     <Button
-        android:id="@+id/midButton"
+        android:id="@+id/rvrseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/leftButton"
+        android:layout_alignEnd="@+id/fwrdButton"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="0dp"
+        android:onClick="onOther"
+        android:text="Reverse" />
+
+    <Button
+        android:id="@+id/fwrdButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rectangle"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="21dp"
         android:onClick="onMid"
-        android:text="Mid" />
+        android:text="Forward" />
+
     <Button
-        android:id="@+id/highButton"
+        android:id="@+id/rightButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/midButton"
-        android:layout_alignBottom="@+id/midButton"
-        android:layout_marginLeft="28dp"
-        android:layout_toRightOf="@+id/midButton"
+        android:layout_alignBaseline="@id/leftButton"
+        android:layout_alignBottom="@+id/fwrdButton"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@+id/fwrdButton"
         android:onClick="onHigh"
-        android:text="High" />
+        android:text="Right" />
+
     <Button
         android:id="@+id/connectButton"
         android:layout_width="wrap_content"
@@ -69,28 +87,32 @@
         android:text="Connect" />
 
     <Button
-        android:id="@+id/noiseButton"
+        android:id="@+id/stopButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/connectButton"
+        android:layout_above="@id/rvrseButton"
         android:layout_centerHorizontal="true"
-        android:onClick="onNoise"
-        android:text="Light On / Off" />
+        android:onClick="onStop"
+        android:text="Stop" />
+
     <TextView
         android:id="@+id/msgTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/noiseButton"
+        android:layout_above="@+id/stopButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="" />
+
     <Switch
         android:id="@+id/switch1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/leftButton"
         android:layout_alignLeft="@+id/rectangle"
         android:layout_alignRight="@+id/rectangle"
-        android:layout_below="@+id/lowButton"
-        android:layout_marginTop="26dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="302dp"
+        android:layout_marginRight="-3dp"
         android:text="Share" />
 </RelativeLayout>

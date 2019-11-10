@@ -42,10 +42,15 @@ public class MainActivity extends AppCompatActivity implements ScanResultsConsum
     private boolean permissions_granted=false;
     private int device_count=0;
     private Toast toast;
+    private String s_RobotName = "BDSK";
+    private String s_RobotMac = "56:77:88:23:AB:EF";
+    //private String s_RobotName = "Amdtp";
+    //private String s_RobotMac = "06:05:04:E9:DE:06";
     static class ViewHolder {
         public TextView text;
         public TextView bdaddr;
     }
+    //private Button b_Scan;
 
 
     @Override
@@ -53,36 +58,53 @@ public class MainActivity extends AppCompatActivity implements ScanResultsConsum
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        setButtonText();
+        //b_Scan = findViewById(R.id.connectButton);
+        //b_Scan.setVisibility(View.INVISIBLE);
+        //setButtonText();
 
-        ble_device_list_adapter = new ListAdapter();
+        //ble_device_list_adapter = new ListAdapter();
 
-        ListView listView = (ListView) this.findViewById(R.id.deviceList);
-        listView.setAdapter(ble_device_list_adapter);
+        //ListView listView = (ListView) this.findViewById(R.id.deviceList);
+        //listView.setAdapter(ble_device_list_adapter);
 
         ble_scanner = new BleScanner(this.getApplicationContext());
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+        //    @Override
+        //    public void onItemClick(AdapterView<?> parent, View view,
+        //                           int position, long id) {
 
-                if (ble_scanning) {
-                    ble_scanner.stopScanning();
-                }
+        //        if (ble_scanning) {
+        //            ble_scanner.stopScanning();
+        //        }
 
-                BluetoothDevice device = ble_device_list_adapter.getDevice(position);
-                if (toast != null) {
-                    toast.cancel();
-                }
+        //        BluetoothDevice device = ble_device_list_adapter.getDevice(position);
+        //        if (toast != null) {
+        //            toast.cancel();
+        //        }
+        //        Intent intent = new Intent(MainActivity.this, PeripheralControlActivity.class);
+        //        intent.putExtra(PeripheralControlActivity.EXTRA_NAME, device.getName());
+        //        intent.putExtra(PeripheralControlActivity.EXTRA_ID, device.getAddress());
+        //        startActivity(intent);
+
+        //    }
+        //});
+        //new Handler().postDelayed(new Runnable() {
+        //    @Override
+        //    public void run() {
                 Intent intent = new Intent(MainActivity.this, PeripheralControlActivity.class);
-                intent.putExtra(PeripheralControlActivity.EXTRA_NAME, device.getName());
-                intent.putExtra(PeripheralControlActivity.EXTRA_ID, device.getAddress());
+                intent.putExtra(PeripheralControlActivity.EXTRA_NAME,s_RobotName);
+                //intent.putExtra(PeripheralControlActivity.EXTRA_NAME, device.getName());
+                intent.putExtra(PeripheralControlActivity.EXTRA_ID,s_RobotMac);
+                //intent.putExtra(PeripheralControlActivity.EXTRA_ID, device.getAddress());
                 startActivity(intent);
 
-            }
-        });
+                //((Button) MainActivity.this.findViewById(R.id.scanButton)).performClick();
+                //((TextView) MainActivity.this.findViewById(R.id.scanButton)).setText("Select Device");
+        //    }
+        //}, 5000);
+
     }
 
     /***********************************************************************************************
@@ -132,7 +154,8 @@ public class MainActivity extends AppCompatActivity implements ScanResultsConsum
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((TextView) MainActivity.this.findViewById(R.id.scanButton)).setText(button_text);
+                ((TextView) MainActivity.this.findViewById(R.id.scanButton)).setText("Select Robot");
+
             }
         });
     }
